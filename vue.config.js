@@ -5,7 +5,7 @@ module.exports = {
   // 输出文件目录
   outputDir: process.env.NODE_ENV === 'production' ? 'dist' : 'devdist',
   // eslint-loader 是否在保存的时候检查
-  lintOnSave: false,
+  lintOnSave:false,
   /** vue3.0内置了webpack所有东西，
    * webpack配置,see https://github.com/vuejs/vue-cli/blob/dev/docs/webpack.md
    **/
@@ -59,14 +59,14 @@ module.exports = {
   // webpack-dev-server 相关配置
   devServer: {
     open: false, // 编译完成是否打开网页
-    host: '0.0.0.0', // 指定使用地址，默认localhost,0.0.0.0代表可以被外界访问
+    host: 'localhost', // 指定使用地址，默认localhost,0.0.0.0代表可以被外界访问
     port: 8080, // 访问端口
     https: false, // 编译失败时刷新页面
     hot: true, // 开启热加载
     hotOnly: false,
     proxy: {
       "/devApi": {
-          target: "http://www.web-jshtml.cn/productapi/token", //API服务器的地址
+          target: "http://www.web-jshtml.cn/productapi", //API服务器的地址
           changeOrigin: true,
           pathRewrite: {
               "^/devApi": ''

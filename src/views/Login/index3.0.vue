@@ -1,36 +1,34 @@
 <template>
-    <!--    内容区-->
+<!--    内容区-->
     <div id="login">
         <div class="login-wrap">
             <ul class="menu-tab">
                 <li v-for="item in menuTab" :key="item.id" :class="{'current':item.current}" @click="toggleMenu(item)">{{item.txt}}</li>
             </ul>
-            <!--            表单start-->
+<!--            表单start-->
             <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" class="login-form" size="medium">
                 <el-form-item  prop="username" class="item-form">
-                    <label for="username">邮箱</label>
-                    <el-input id="username" type="text" v-model="ruleForm.username" autocomplete="off"></el-input>
+                    <label>邮箱</label>
+                    <el-input type="text" v-model="ruleForm.username" autocomplete="off"></el-input>
                 </el-form-item>
                 <el-form-item  prop="password" class="item-form" >
-                    <label for="password">密码</label>
-                    <el-input id="password" type="password" v-model="ruleForm.password" autocomplete="off" minlength="6" maxlength="20"></el-input>
+                <label>密码</label>
+                <el-input type="password" v-model="ruleForm.password" autocomplete="off" minlength="6" maxlength="20"></el-input>
                 </el-form-item>
                 <el-form-item  prop="passwords" class="item-form" v-show="model==='register'">
-                    <label for="passwords">重复密码</label>
-                    <el-input id="passwords" type="passwords" v-model="ruleForm.passwords" autocomplete="off" minlength="6" maxlength="20"></el-input>
+                    <label>重复密码</label>
+                    <el-input type="passwords" v-model="ruleForm.passwords" autocomplete="off" minlength="6" maxlength="20"></el-input>
                 </el-form-item>
                 <el-form-item  prop="code" class="item-form" minlength="6" maxlength="6">
-                    <label for="code">验证码</label>
+                    <label>验证码</label>
                     <el-row :gutter="11">
-                        <el-col :span="15"><el-input id="code" v-model.number="ruleForm.code"></el-input></el-col>
-                        <el-col :span="9"><el-button type="success" class="block" @click="getSms()">获取验证码</el-button></el-col>
+                        <el-col :span="15"><el-input v-model.number="ruleForm.code"></el-input></el-col>
+                        <el-col :span="9"><el-button type="success" class="block">获取验证码</el-button></el-col>
                     </el-row>
+
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="danger"
-                               @click="submitForm('ruleForm')"
-                               class="login-btn block"
-                                v-bind:disabled="loginButtonStatus">{{model==='login' ? "登录":"注册"}}</el-button>
+                    <el-button type="danger" @click="submitForm('ruleForm')" class="login-btn block">提交</el-button>
                 </el-form-item>
             </el-form>
         </div>
@@ -38,28 +36,13 @@
     </div>
 </template>
 <script>
-    import {GetSms} from "../../api/login";
-    import {} from '@/api/login.js'
     import {reactive,ref,onMounted} from '@vue/composition-api'
     import {stripscript,validateEmail,validatePass,validatePasses,validateCode} from '@/utils/validate.js'
     export default {
         name:'login',
-        // setup(props,context){
-            //props父组件给子组件传值所使用的，context
+        setup(props,context){
             //表单的数据
             //验证用户名
-        /*
-        * context{
-        *   attrs: (...)==this.$attrs
-em          it: ƒ ()==this.$it
-            isServer: (...)==this.$isServer
-            listeners: (...)==this.$listeners
-            parent: (...)==this.parent
-            refs: (...)==this.refs
-            root: (...)==this.root
-        * }
-        * */
-        setup(props,{refs,root}){
             const validateUsername = (rule, value, callback) => {
                 if (value === '') {
                     callback(new Error('请输入用户名'));
@@ -120,8 +103,6 @@ em          it: ƒ ()==this.$it
             ],)
             //模块值
             const model=ref('login')
-            //登录按钮禁用状态
-            const loginButtonStatus=ref(true);
             console.log(model.value)
             //表单绑定数据
             const  ruleForm=reactive({
@@ -154,36 +135,10 @@ em          it: ƒ ()==this.$it
                 //高光
                 data.current=true
                 //修改模块值
-                model.value=data.type
+               model.value=data.type
             })
-            /*
-            获取验证码
-            */
-            const getSms=(()=>{
-                //进行提示
-                if(ruleForm.username==""){
-                    root.$message.error('邮箱不能为空！！！');
-                    return false
-                }
-                if(validateEmail(ruleForm.username)){
-                    root.$message.error('邮箱格式有误，请重新输入！！');
-                    return false
-                }
-                //请求的接口
-                //获取验证码
-                GetSms({username:ruleForm.username, module: 'login'}).then(response=>{
-                    //接收正确的东西，即接收response(Promise.resolve)返回的东西
-                    console.log(response)
-                }).catch(error=>{
-                    //接收错误的东西，即接收Promise.reject返回的东西
-                    console.log(error)
-                })
-            })
-            /*
-            提交表单
-            */
             const  submitForm=(formName=>{
-                refs[formName].validate((valid) => {
+                context.refs[formName].validate((valid) => {
                     if (valid) {
                         alert('submit!');
                     } else {
@@ -206,54 +161,52 @@ em          it: ƒ ()==this.$it
                 submitForm,
                 ruleForm,
                 rules,
-                getSms,
-                loginButtonStatus
             }
         },
 
     }
 </script>
 <style lang="scss" scoped>
-    #login{
-        height: 100vh;
-        background-color: #344a5f;
+#login{
+    height: 100vh;
+    background-color: #344a5f;
+}
+.login-wrap{
+    width: 330px;
+    margin: auto;
+}
+.menu-tab{
+    text-align: center;
+    li{
+        display: inline-block;
+        width: 88px;
+        line-height: 36px;
+        font-size: 14px;
+        color: white;
+        border-radius: 2px;
+        cursor: pointer;
     }
-    .login-wrap{
-        width: 330px;
-        margin: auto;
+    .current{
+        background-color: rgba(0,0,0,.1);
     }
-    .menu-tab{
-        text-align: center;
-        li{
-            display: inline-block;
-            width: 88px;
-            line-height: 36px;
-            font-size: 14px;
-            color: white;
-            border-radius: 2px;
-            cursor: pointer;
-        }
-        .current{
-            background-color: rgba(0,0,0,.1);
-        }
-    }
-    .login-form{
-        label{
-            display: block;
-            font-size: 14px;
-            color: #fff;
-            margin-bottom: 3px;
-        }
-    }
-    .item-form{
-        margin-bottom: 13px;
-    }
-    .block{
+}
+.login-form{
+    label{
         display: block;
-        width: 100%;
+        font-size: 14px;
+        color: #fff;
+        margin-bottom: 3px;
     }
-    .login-btn{
-        margin-top: 19px;
+}
+.item-form{
+    margin-bottom: 13px;
+}
+.block{
+    display: block;
+    width: 100%;
     }
+.login-btn{
+margin-top: 19px;
+}
 
 </style>
